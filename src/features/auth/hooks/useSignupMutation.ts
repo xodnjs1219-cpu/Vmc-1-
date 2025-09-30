@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const signup = async (request: SignupRequest): Promise<SignupResponse> => {
   try {
-    const { data } = await apiClient.post('/api/auth/signup', request);
+    const { data } = await apiClient.post('/auth/signup', request);
     return SignupResponseSchema.parse(data);
   } catch (error) {
     const message = extractApiErrorMessage(error, '회원가입에 실패했습니다');

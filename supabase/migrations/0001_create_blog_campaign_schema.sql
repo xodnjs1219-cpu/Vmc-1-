@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS public.influencer_profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
   birth_date DATE NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -39,6 +40,7 @@ CREATE INDEX IF NOT EXISTS idx_influencer_profiles_user_id ON public.influencer_
 
 COMMENT ON TABLE public.influencer_profiles IS '인플루언서 전용 프로필 정보';
 COMMENT ON COLUMN public.influencer_profiles.birth_date IS '생년월일';
+COMMENT ON COLUMN public.influencer_profiles.status IS '프로필 상태: draft(임시저장), submitted(제출완료)';
 
 -- ============================================================================
 -- 3. influencer_channels: 인플루언서 SNS 채널 정보 (1:N)
