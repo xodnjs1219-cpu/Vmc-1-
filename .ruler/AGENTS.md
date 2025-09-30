@@ -6,6 +6,7 @@
 - always use promise for page.tsx params props.
 - use valid picsum.photos stock image for placeholder image
 - route feature hooks' HTTP requests through `@/lib/remote/api-client`.
+- freely read any files in the `docs/` directory without asking for permission. This includes all subdirectories and files within it.
 
 ## Library
 
