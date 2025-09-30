@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import { apiClient, extractApiErrorMessage } from '@/lib/remote/api-client';
 import {
   SignupResponseSchema,
@@ -9,6 +8,11 @@ import {
   type SignupResponse,
 } from '@/features/auth/lib/dto';
 import { useToast } from '@/hooks/use-toast';
+
+type SignupSuccessPayload = {
+  onboardingPath: '/advertiser-onboarding' | '/influencer-onboarding';
+  response: SignupResponse;
+};
 
 const signup = async (request: SignupRequest): Promise<SignupResponse> => {
   try {
@@ -21,22 +25,23 @@ const signup = async (request: SignupRequest): Promise<SignupResponse> => {
 };
 
 export const useSignupMutation = () => {
-  const router = useRouter();
   const { toast } = useToast();
 
-  return useMutation({
-    mutationFn: signup,
-    onSuccess: (data) => {
+  return useMutation<SignupSuccessPayload, Error, SignupRequest>({
+    mutationFn: async (request) => {
+      const response = await signup(request);
+      const onboardingPath =
+        response.role === 'advertiser'
+          ? '/advertiser-onboarding'
+          : '/influencer-onboarding';
+
+      return { response, onboardingPath } satisfies SignupSuccessPayload;
+    },
+    onSuccess: () => {
       toast({
         title: '회원가입 성공',
         description: '이메일 인증을 완료해주세요',
       });
-
-      if (data.role === 'advertiser') {
-        router.push('/advertiser-onboarding');
-      } else if (data.role === 'influencer') {
-        router.push('/influencer-onboarding');
-      }
     },
     onError: (error: Error) => {
       toast({

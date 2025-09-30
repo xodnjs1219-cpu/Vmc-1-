@@ -1,23 +1,24 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { apiClient, extractApiErrorMessage, isAxiosError } from '@/lib/remote/api-client';
+import {
+  AdvertiserProfileResponseSchema,
+  type AdvertiserProfileResponse,
+} from '@/features/advertiser/lib/dto';
 
-export const useAdvertiserProfileQuery = () => {
-  return useQuery({
+export const useAdvertiserProfileQuery = () =>
+  useQuery<AdvertiserProfileResponse | null>({
     queryKey: ['advertiser-profile'],
     queryFn: async () => {
-      const response = await fetch('/api/advertiser/profile');
-
-      if (!response.ok) {
-        if (response.status === 404) {
+      try {
+        const { data } = await apiClient.get<AdvertiserProfileResponse>('/advertiser/profile');
+        return AdvertiserProfileResponseSchema.parse(data);
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 404) {
           return null;
         }
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || '프로필 조회에 실패했습니다');
+        throw new Error(extractApiErrorMessage(error, '프로필 조회에 실패했습니다'));
       }
-
-      const result = await response.json();
-      return result.data?.profile;
     },
   });
-};

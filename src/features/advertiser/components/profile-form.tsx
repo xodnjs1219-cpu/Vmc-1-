@@ -44,11 +44,11 @@ export const AdvertiserProfileForm = () => {
   });
 
   useEffect(() => {
-    if (profileData) {
-      setValue('companyName', profileData.companyName);
-      setValue('location', profileData.location);
-      setValue('category', profileData.category);
-      setValue('businessNumber', profileData.businessNumber);
+    if (profileData?.profile) {
+      setValue('companyName', profileData.profile.companyName);
+      setValue('location', profileData.profile.location);
+      setValue('category', profileData.profile.category);
+      setValue('businessNumber', profileData.profile.businessNumber);
     }
   }, [profileData, setValue]);
 
@@ -154,13 +154,13 @@ export const AdvertiserProfileForm = () => {
             )}
           </div>
 
-          {profileData && (
+          {profileData?.profile && (
             <div className="p-4 bg-muted rounded-md">
               <p className="text-sm">
                 <span className="font-semibold">검증 상태:</span>{' '}
-                {profileData.verificationStatus === 'pending' && '검증 대기 중'}
-                {profileData.verificationStatus === 'verified' && '검증 완료'}
-                {profileData.verificationStatus === 'failed' && '검증 실패'}
+                {profileData.profile.verificationStatus === 'pending' && '검증 대기 중'}
+                {profileData.profile.verificationStatus === 'verified' && '검증 완료'}
+                {profileData.profile.verificationStatus === 'failed' && '검증 실패'}
               </p>
             </div>
           )}

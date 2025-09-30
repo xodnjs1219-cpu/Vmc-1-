@@ -1,12 +1,21 @@
 import { z } from 'zod';
 import {
-  ApplicationSubmitRequestSchema,
   ApplicationListQuerySchema,
+  ApplicationListResponseSchema,
+  ApplicationResponseSchema,
+  ApplicationSubmitRequestSchema,
 } from '@/features/applications/backend/schema';
 
 export type ApplicationSubmitRequest = z.infer<
   typeof ApplicationSubmitRequestSchema
 >;
 export type ApplicationListQuery = z.infer<typeof ApplicationListQuerySchema>;
+export type ApplicationListResponse = z.infer<typeof ApplicationListResponseSchema>;
+export type ApplicationResponse = z.infer<typeof ApplicationResponseSchema>;
 
-export { ApplicationSubmitRequestSchema, ApplicationListQuerySchema };
+export {
+  ApplicationSubmitRequestSchema,
+  ApplicationListQuerySchema,
+  ApplicationListResponseSchema,
+  ApplicationResponseSchema,
+};

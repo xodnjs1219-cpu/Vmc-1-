@@ -4,22 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import type { CampaignResponse } from '@/features/campaigns/lib/dto';
 
 interface CampaignCardProps {
-  campaign: {
-    id: string;
-    title: string;
-    recruitmentStart: string;
-    recruitmentEnd: string;
-    maxParticipants: number;
-    benefits: string;
-    status: 'recruiting' | 'closed' | 'completed';
-    advertiser?: {
-      companyName: string;
-      location: string;
-      category: string;
-    };
-  };
+  campaign: CampaignResponse;
 }
 
 export const CampaignCard = ({ campaign }: CampaignCardProps) => {

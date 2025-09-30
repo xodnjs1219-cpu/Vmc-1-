@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,6 +30,7 @@ const SignupFormSchema = SignupRequestSchema.extend({
 type SignupFormValues = z.infer<typeof SignupFormSchema>;
 
 export const SignupForm = () => {
+  const router = useRouter();
   const signupMutation = useSignupMutation();
 
   const form = useForm<SignupFormValues>({
@@ -47,7 +49,11 @@ export const SignupForm = () => {
   const onSubmit = (values: SignupFormValues) => {
     const { confirmPassword, ...signupData } = values;
     void confirmPassword;
-    signupMutation.mutate(signupData);
+    signupMutation.mutate(signupData, {
+      onSuccess: (payload) => {
+        router.push(payload.onboardingPath);
+      },
+    });
   };
 
   const handlePhoneChange = (

@@ -27,30 +27,25 @@ export default function SignupPage({ params }: SignupPageProps) {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center gap-10 px-6 py-16">
-      <div className="grid w-full gap-12 md:grid-cols-2">
-        <div className="flex flex-col items-center justify-center">
-          <SignupForm />
-          <p className="mt-6 text-sm text-slate-500">
-            이미 계정이 있으신가요?{' '}
-            <Link
-              href="/login"
-              className="font-medium text-slate-700 underline hover:text-slate-900"
-            >
-              로그인으로 이동
-            </Link>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-16">
+      <div className="flex w-full max-w-5xl flex-col gap-12 md:flex-row md:items-center md:justify-between">
+        <section className="max-w-xl space-y-6">
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+            체험단 플랫폼에 합류하세요
+          </h1>
+          <p className="text-lg text-slate-600">
+            광고주와 인플루언서를 연결하는 통합 솔루션입니다. 회원가입 후 역할에 맞는
+            온보딩을 진행하세요.
           </p>
+          <ul className="space-y-3 text-sm text-slate-500">
+            <li>• 광고주: 체험단을 등록하고 지원자를 관리하세요</li>
+            <li>• 인플루언서: 다양한 캠페인에 지원하고 활동 내역을 관리하세요</li>
+            <li>• Supabase Auth 기반으로 안전하게 관리됩니다</li>
+          </ul>
+        </section>
+        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+          <SignupForm />
         </div>
-        <figure className="hidden overflow-hidden rounded-xl border border-slate-200 md:block">
-          <Image
-            src="https://picsum.photos/seed/signup/800/800"
-            alt="회원가입"
-            width={800}
-            height={800}
-            className="h-full w-full object-cover"
-            priority
-          />
-        </figure>
       </div>
     </div>
   );
