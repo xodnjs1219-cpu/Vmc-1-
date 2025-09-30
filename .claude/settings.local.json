@@ -4,7 +4,12 @@
       "Read(docs/*)",
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(powershell:*)",
+      "Bash(git checkout:*)",
+      "Bash(iconv:*)"
     ],
     "deny": [],
     "ask": []
