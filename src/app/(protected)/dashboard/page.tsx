@@ -2,12 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Briefcase, NotebookPen, Sparkles, TrendingUp, Users, FileText, Home } from "lucide-react";
+import { ArrowRight, Sparkles, Home } from "lucide-react";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
-import { DashboardGrid } from "@/components/ui/dashboard-grid";
-import { DashboardCard } from "@/components/ui/dashboard-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { InfluencerDashboard } from "@/features/influencer/components/influencer-dashboard";
+import { AdvertiserDashboard } from "@/features/advertiser/components/advertiser-dashboard";
 
 type DashboardPageProps = {
   params: Promise<Record<string, never>>;
@@ -58,153 +57,11 @@ export default function DashboardPage({ params }: DashboardPageProps) {
 
       {/* 메인 콘텐츠 */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        {/* 빠른 액션 카드 */}
-        <div className="grid gap-6 md:grid-cols-3 mb-12">
-          <Link
-            href="/campaigns"
-            className="group rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1"
-          >
-            <div className="flex items-center gap-4">
-              <div className="rounded-xl bg-indigo-100 p-3">
-                <TrendingUp className="h-6 w-6 text-indigo-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                  체험단 둘러보기
-                </h3>
-                <p className="text-sm text-slate-500 mt-1">모집 중인 캠페인 확인</p>
-              </div>
-            </div>
-          </Link>
-
-          {role === "influencer" && (
-            <Link
-              href="/dashboard/applications"
-              className="group rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1"
-            >
-              <div className="flex items-center gap-4">
-                <div className="rounded-xl bg-emerald-100 p-3">
-                  <FileText className="h-6 w-6 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                    내 지원 목록
-                  </h3>
-                  <p className="text-sm text-slate-500 mt-1">지원 현황 확인</p>
-                </div>
-              </div>
-            </Link>
-          )}
-
-          {role === "advertiser" && (
-            <Link
-              href="/dashboard/my-campaigns"
-              className="group rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1"
-            >
-              <div className="flex items-center gap-4">
-                <div className="rounded-xl bg-pink-100 p-3">
-                  <Users className="h-6 w-6 text-pink-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 group-hover:text-pink-600 transition-colors">
-                    체험단 관리
-                  </h3>
-                  <p className="text-sm text-slate-500 mt-1">내 체험단 확인 및 관리</p>
-                </div>
-              </div>
-            </Link>
-          )}
-
-          <Link
-            href={role === "advertiser" ? "/dashboard/advertiser" : "/influencer/profile"}
-            className="group rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1"
-          >
-            <div className="flex items-center gap-4">
-              <div className="rounded-xl bg-purple-100 p-3">
-                <NotebookPen className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 group-hover:text-purple-600 transition-colors">
-                  {role === "influencer" ? "채널 추가하기" : "프로필 설정"}
-                </h3>
-                <p className="text-sm text-slate-500 mt-1">
-                  {role === "advertiser" ? "광고주 정보 관리" : "인플루언서 정보 관리"}
-                </p>
-              </div>
-            </div>
-          </Link>
-        </div>
-
         {/* 인플루언서 대시보드 */}
         {role === "influencer" && <InfluencerDashboard />}
 
-        {/* 광고주 시스템 정보 */}
-        {role === "advertiser" && (
-          <>
-            <DashboardGrid>
-              <DashboardCard
-                title="현재 세션"
-                description="Supabase 미들웨어가 세션 쿠키를 자동으로 동기화합니다."
-              >
-                <ul className="space-y-2 text-sm text-slate-600">
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-600 mt-0.5">✓</span>
-                    <span>로그인 세션은 서버와 클라이언트 모두에서 안전하게 유지됩니다.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-600 mt-0.5">✓</span>
-                    <span>보호된 페이지 접근 시 자동으로 검증이 수행됩니다.</span>
-                  </li>
-                </ul>
-              </DashboardCard>
-
-              <DashboardCard
-                title="보안 체크"
-                description="App Router 기반 보호 구역으로 인증이 필요합니다."
-              >
-                <ul className="space-y-2 text-sm text-slate-600">
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-600 mt-0.5">✓</span>
-                    <span>민감한 데이터는 서버 컴포넌트에서만 조회합니다.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-600 mt-0.5">✓</span>
-                    <span>Hono + Supabase 조합으로 모든 API가 보호됩니다.</span>
-                  </li>
-                </ul>
-              </DashboardCard>
-            </DashboardGrid>
-
-            <div className="mt-8">
-              <DashboardCard
-                title="광고주 온보딩"
-                description="체험단을 등록하려면 광고주 정보를 제출해야 합니다."
-                action={
-                  <Link
-                    href="/dashboard/advertiser"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:gap-3 transition-all"
-                  >
-                    정보 등록하기
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                }
-              >
-                <div className="flex items-start gap-4 rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
-                  <div className="rounded-2xl bg-indigo-600 p-4 text-white shadow-lg">
-                    <Briefcase className="h-7 w-7" />
-                  </div>
-                  <div className="flex-1 space-y-2 text-sm text-slate-700">
-                    <p className="font-medium text-slate-900">필수 정보를 제출해주세요</p>
-                    <ul className="space-y-1">
-                      <li>• 사업자 정보, 카테고리, 위치 등 필수 정보 입력</li>
-                      <li>• 검증 완료 후 체험단 등록 및 지원자 관리 가능</li>
-                    </ul>
-                  </div>
-                </div>
-              </DashboardCard>
-            </div>
-          </>
-        )}
+        {/* 광고주 대시보드 */}
+        {role === "advertiser" && <AdvertiserDashboard />}
 
         {role !== "advertiser" && role !== "influencer" && (
           <div className="mt-8">
