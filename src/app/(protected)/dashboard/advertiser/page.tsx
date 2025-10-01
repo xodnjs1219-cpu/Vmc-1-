@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LogIn, Loader2, ArrowLeft } from 'lucide-react';
 import { AdvertiserProfileForm } from '@/features/advertiser/components/profile-form';
@@ -10,8 +8,7 @@ import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 
 export default function AdvertiserProfilePage() {
-  const { user, isAuthenticated, isLoading } = useCurrentUser();
-  const router = useRouter();
+  const { isAuthenticated, isLoading } = useCurrentUser();
 
   if (isLoading) {
     return (
@@ -56,7 +53,7 @@ export default function AdvertiserProfilePage() {
           className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:underline mb-4"
         >
           <ArrowLeft className="h-4 w-4" />
-          대시보드로 돌아가기
+          나의 프로필로 돌아가기
         </Link>
       </div>
       <AdvertiserProfileForm />

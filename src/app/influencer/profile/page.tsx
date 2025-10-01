@@ -1,17 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LogIn, Loader2 } from 'lucide-react';
+import { LogIn, Loader2, ArrowLeft } from 'lucide-react';
 import { ProfileForm } from '@/features/influencer/components/profile-form';
 import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 
 export default function InfluencerProfilePage() {
-  const { user, isAuthenticated, isLoading } = useCurrentUser();
-  const router = useRouter();
+  const { isAuthenticated, isLoading } = useCurrentUser();
 
   if (isLoading) {
     return (
@@ -50,6 +47,15 @@ export default function InfluencerProfilePage() {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
+      <div className="mb-6">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:underline mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          나의 프로필로 돌아가기
+        </Link>
+      </div>
       <ProfileForm />
     </div>
   );

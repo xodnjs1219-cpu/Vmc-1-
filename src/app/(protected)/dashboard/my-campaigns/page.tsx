@@ -54,7 +54,7 @@ export default function MyCampaignsPage() {
           description="이 페이지는 광고주만 접근할 수 있습니다."
           action={
             <Button asChild>
-              <Link href="/dashboard">대시보드로 돌아가기</Link>
+              <Link href="/dashboard">나의 프로필로 돌아가기</Link>
             </Button>
           }
         />
@@ -72,7 +72,7 @@ export default function MyCampaignsPage() {
             className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20 mb-6"
           >
             <ArrowLeft className="h-4 w-4" />
-            대시보드로 돌아가기
+            나의 프로필로 돌아가기
           </Link>
 
           <div className="flex items-center gap-2 mb-4">

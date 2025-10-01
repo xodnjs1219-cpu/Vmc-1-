@@ -31,7 +31,7 @@ export default function Home() {
             href="/dashboard"
             className="rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
           >
-            대시보드
+            나의 프로필
           </Link>
           <button
             type="button"
@@ -85,7 +85,7 @@ export default function Home() {
                   href="/dashboard"
                   className="text-sm font-medium text-white/90 transition hover:text-white"
                 >
-                  대시보드
+                  나의 프로필
                 </Link>
               )}
             </nav>

@@ -7,6 +7,7 @@ import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { DashboardGrid } from "@/components/ui/dashboard-grid";
 import { DashboardCard } from "@/components/ui/dashboard-card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { InfluencerDashboard } from "@/features/influencer/components/influencer-dashboard";
 
 type DashboardPageProps = {
   params: Promise<Record<string, never>>;
@@ -24,7 +25,7 @@ export default function DashboardPage({ params }: DashboardPageProps) {
       <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
         <div className="absolute inset-0">
           <Image
-            alt="대시보드 배경"
+            alt="나의 프로필 배경"
             src="https://picsum.photos/seed/dashboard/1920/400"
             fill
             className="object-cover opacity-10"
@@ -124,7 +125,7 @@ export default function DashboardPage({ params }: DashboardPageProps) {
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 group-hover:text-purple-600 transition-colors">
-                  프로필 설정
+                  {role === "influencer" ? "채널 추가하기" : "프로필 설정"}
                 </h3>
                 <p className="text-sm text-slate-500 mt-1">
                   {role === "advertiser" ? "광고주 정보 관리" : "인플루언서 정보 관리"}
@@ -134,102 +135,75 @@ export default function DashboardPage({ params }: DashboardPageProps) {
           </Link>
         </div>
 
-        {/* 시스템 정보 */}
-        <DashboardGrid>
-          <DashboardCard
-            title="현재 세션"
-            description="Supabase 미들웨어가 세션 쿠키를 자동으로 동기화합니다."
-          >
-            <ul className="space-y-2 text-sm text-slate-600">
-              <li className="flex items-start gap-2">
-                <span className="text-indigo-600 mt-0.5">✓</span>
-                <span>로그인 세션은 서버와 클라이언트 모두에서 안전하게 유지됩니다.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-indigo-600 mt-0.5">✓</span>
-                <span>보호된 페이지 접근 시 자동으로 검증이 수행됩니다.</span>
-              </li>
-            </ul>
-          </DashboardCard>
+        {/* 인플루언서 대시보드 */}
+        {role === "influencer" && <InfluencerDashboard />}
 
-          <DashboardCard
-            title="보안 체크"
-            description="App Router 기반 보호 구역으로 인증이 필요합니다."
-          >
-            <ul className="space-y-2 text-sm text-slate-600">
-              <li className="flex items-start gap-2">
-                <span className="text-indigo-600 mt-0.5">✓</span>
-                <span>민감한 데이터는 서버 컴포넌트에서만 조회합니다.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-indigo-600 mt-0.5">✓</span>
-                <span>Hono + Supabase 조합으로 모든 API가 보호됩니다.</span>
-              </li>
-            </ul>
-          </DashboardCard>
-        </DashboardGrid>
-
-        {/* 역할별 온보딩 안내 */}
+        {/* 광고주 시스템 정보 */}
         {role === "advertiser" && (
-          <div className="mt-8">
-            <DashboardCard
-              title="광고주 온보딩"
-              description="체험단을 등록하려면 광고주 정보를 제출해야 합니다."
-              action={
-                <Link
-                  href="/dashboard/advertiser"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:gap-3 transition-all"
-                >
-                  정보 등록하기
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              }
-            >
-              <div className="flex items-start gap-4 rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
-                <div className="rounded-2xl bg-indigo-600 p-4 text-white shadow-lg">
-                  <Briefcase className="h-7 w-7" />
-                </div>
-                <div className="flex-1 space-y-2 text-sm text-slate-700">
-                  <p className="font-medium text-slate-900">필수 정보를 제출해주세요</p>
-                  <ul className="space-y-1">
-                    <li>• 사업자 정보, 카테고리, 위치 등 필수 정보 입력</li>
-                    <li>• 검증 완료 후 체험단 등록 및 지원자 관리 가능</li>
-                  </ul>
-                </div>
-              </div>
-            </DashboardCard>
-          </div>
-        )}
+          <>
+            <DashboardGrid>
+              <DashboardCard
+                title="현재 세션"
+                description="Supabase 미들웨어가 세션 쿠키를 자동으로 동기화합니다."
+              >
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li className="flex items-start gap-2">
+                    <span className="text-indigo-600 mt-0.5">✓</span>
+                    <span>로그인 세션은 서버와 클라이언트 모두에서 안전하게 유지됩니다.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-indigo-600 mt-0.5">✓</span>
+                    <span>보호된 페이지 접근 시 자동으로 검증이 수행됩니다.</span>
+                  </li>
+                </ul>
+              </DashboardCard>
 
-        {role === "influencer" && (
-          <div className="mt-8">
-            <DashboardCard
-              title="인플루언서 온보딩"
-              description="프로필을 완료하고 체험단에 지원해보세요."
-              action={
-                <Link
-                  href="/influencer/profile"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:gap-3 transition-all"
-                >
-                  프로필 등록하기
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              }
-            >
-              <div className="flex items-start gap-4 rounded-2xl border-2 border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-6">
-                <div className="rounded-2xl bg-emerald-600 p-4 text-white shadow-lg">
-                  <NotebookPen className="h-7 w-7" />
+              <DashboardCard
+                title="보안 체크"
+                description="App Router 기반 보호 구역으로 인증이 필요합니다."
+              >
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li className="flex items-start gap-2">
+                    <span className="text-indigo-600 mt-0.5">✓</span>
+                    <span>민감한 데이터는 서버 컴포넌트에서만 조회합니다.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-indigo-600 mt-0.5">✓</span>
+                    <span>Hono + Supabase 조합으로 모든 API가 보호됩니다.</span>
+                  </li>
+                </ul>
+              </DashboardCard>
+            </DashboardGrid>
+
+            <div className="mt-8">
+              <DashboardCard
+                title="광고주 온보딩"
+                description="체험단을 등록하려면 광고주 정보를 제출해야 합니다."
+                action={
+                  <Link
+                    href="/dashboard/advertiser"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:gap-3 transition-all"
+                  >
+                    정보 등록하기
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                }
+              >
+                <div className="flex items-start gap-4 rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
+                  <div className="rounded-2xl bg-indigo-600 p-4 text-white shadow-lg">
+                    <Briefcase className="h-7 w-7" />
+                  </div>
+                  <div className="flex-1 space-y-2 text-sm text-slate-700">
+                    <p className="font-medium text-slate-900">필수 정보를 제출해주세요</p>
+                    <ul className="space-y-1">
+                      <li>• 사업자 정보, 카테고리, 위치 등 필수 정보 입력</li>
+                      <li>• 검증 완료 후 체험단 등록 및 지원자 관리 가능</li>
+                    </ul>
+                  </div>
                 </div>
-                <div className="flex-1 space-y-2 text-sm text-slate-700">
-                  <p className="font-medium text-slate-900">프로필을 완성하세요</p>
-                  <ul className="space-y-1">
-                    <li>• 생년월일과 SNS 채널을 등록하고 검증 완료</li>
-                    <li>• 검증된 채널이 있어야 체험단 지원 가능</li>
-                  </ul>
-                </div>
-              </div>
-            </DashboardCard>
-          </div>
+              </DashboardCard>
+            </div>
+          </>
         )}
 
         {role !== "advertiser" && role !== "influencer" && (
