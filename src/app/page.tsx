@@ -73,7 +73,7 @@ export default function Home() {
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-white" />
-              <h1 className="text-xl font-bold text-white">블로그 체험단</h1>
+              <h1 className="text-xl font-bold text-white">review-ad</h1>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               <Link
@@ -274,10 +274,10 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-white" />
-              <span className="text-sm font-semibold text-white">블로그 체험단</span>
+              <span className="text-sm font-semibold text-white">review-ad</span>
             </div>
             <p className="text-sm text-white/70">
-              © 2025 블로그 체험단. All rights reserved.
+              © 2025 review-ad. All rights reserved.
             </p>
           </div>
         </div>

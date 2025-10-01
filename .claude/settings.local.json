@@ -9,7 +9,8 @@
       "Bash(npx tsc:*)",
       "Bash(powershell:*)",
       "Bash(git checkout:*)",
-      "Bash(iconv:*)"
+      "Bash(iconv:*)",
+      "Bash(npx shadcn@latest add:*)"
     ],
     "deny": [],
     "ask": []

@@ -19,6 +19,7 @@ import {
 import { SignupRequestSchema } from '@/features/auth/lib/dto';
 import { useSignupMutation } from '@/features/auth/hooks/useSignupMutation';
 import { formatPhoneNumber } from '@/features/auth/lib/validation';
+import { TermsDialog, PrivacyDialog } from './terms-dialog';
 
 const SignupFormSchema = SignupRequestSchema.extend({
   confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요'),
@@ -221,7 +222,24 @@ export const SignupForm = () => {
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel className="text-sm font-normal">
-                  서비스 이용약관 및 개인정보 처리방침에 동의합니다
+                  <TermsDialog>
+                    <button
+                      type="button"
+                      className="text-indigo-600 hover:underline"
+                    >
+                      서비스 이용약관
+                    </button>
+                  </TermsDialog>
+                  {' 및 '}
+                  <PrivacyDialog>
+                    <button
+                      type="button"
+                      className="text-indigo-600 hover:underline"
+                    >
+                      개인정보 처리방침
+                    </button>
+                  </PrivacyDialog>
+                  에 동의합니다
                 </FormLabel>
                 <FormMessage />
               </div>
