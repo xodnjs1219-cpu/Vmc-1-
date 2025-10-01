@@ -2,6 +2,7 @@ import type { Hono } from 'hono';
 import {
   failure,
   respond,
+  success,
   type ErrorResult,
 } from '@/backend/http/response';
 import {
@@ -17,6 +18,36 @@ import {
 } from '@/features/auth/backend/error';
 
 export const registerAuthRoutes = (app: Hono<AppEnv>) => {
+  app.get('/auth/profile', async (c) => {
+    const supabase = getSupabase(c);
+    const logger = getLogger(c);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return respond(
+        c,
+        failure(401, authErrorCodes.validationError, '인증되지 않은 사용자입니다'),
+      );
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile) {
+      logger.error('Profile fetch failed', profileError);
+      return respond(
+        c,
+        failure(404, authErrorCodes.validationError, '프로필을 찾을 수 없습니다'),
+      );
+    }
+
+    return respond(c, success({ role: profile.role }, 200));
+  });
+
   app.post('/auth/signup', async (c) => {
     const body = await c.req.json();
     const parsedBody = SignupRequestSchema.safeParse(body);
