@@ -42,7 +42,7 @@ export const MyCampaignList = () => {
             등록한 체험단이 없습니다
           </h3>
           <p className="text-sm text-slate-500">
-            우측 상단의 "신규 체험단 등록" 버튼을 클릭하여 체험단을 등록해보세요.
+            우측 상단의 &quot;신규 체험단 등록&quot; 버튼을 클릭하여 체험단을 등록해보세요.
           </p>
         </div>
       </div>

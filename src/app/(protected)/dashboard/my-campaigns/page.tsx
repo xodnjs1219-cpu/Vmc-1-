@@ -100,7 +100,7 @@ export default function MyCampaignsPage() {
           <div className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
             <h2 className="text-lg font-bold text-slate-900 mb-2">📋 관리 안내</h2>
             <ul className="text-sm text-slate-600 space-y-2">
-              <li>• <strong>신규 체험단 등록</strong>: 우측 상단의 "신규 체험단 등록" 버튼을 클릭하세요</li>
+              <li>• <strong>신규 체험단 등록</strong>: 우측 상단의 &quot;신규 체험단 등록&quot; 버튼을 클릭하세요</li>
               <li>• <strong>지원자 확인</strong>: 각 체험단 카드를 클릭하여 지원자 목록을 확인할 수 있습니다</li>
               <li>• <strong>모집 관리</strong>: 모집 중인 체험단은 언제든지 모집 종료할 수 있습니다</li>
             </ul>

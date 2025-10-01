@@ -117,6 +117,11 @@ export const CampaignResponseSchema = z.object({
     })
     .optional(),
   applicantsCount: z.number().optional(),
+  _count: z
+    .object({
+      applications: z.number(),
+    })
+    .optional(),
 });
 
 export type CampaignResponse = z.infer<typeof CampaignResponseSchema>;
