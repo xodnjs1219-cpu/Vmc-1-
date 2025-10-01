@@ -116,7 +116,7 @@ export const registerCampaignRoutes = (app: Hono<AppEnv>) => {
       );
 
       if (!result.ok) {
-        logger.error('Failed to fetch campaigns', { error: result.error });
+        logger.error('Failed to fetch campaigns');
         return respond(c, result);
       }
 

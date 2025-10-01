@@ -23,7 +23,6 @@ const fetchCampaignDetail = async (campaignId: string): Promise<CampaignDetailRe
   if (!result.ok) {
     console.error('[CampaignDetailPage] Failed to fetch campaign:', {
       campaignId,
-      error: result.error,
     });
     notFound();
   }

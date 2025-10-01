@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Users, Megaphone, ArrowRight, LogOut, Sparkles, TrendingUp } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
-import { HeroBanner } from "@/components/ui/hero-banner";
 import { CampaignList } from "@/features/campaigns/components/campaign-list";
 
 export default function Home() {
@@ -63,21 +62,6 @@ export default function Home() {
       </div>
     );
   }, [handleSignOut, isAuthenticated, isLoading, user]);
-
-  const bannerItems = [
-    {
-      id: "1",
-      title: "🎉 신규 체험단 오픈! 최신 캠페인을 만나보세요",
-      imageUrl: "https://picsum.photos/seed/banner1/800/400",
-      linkUrl: "/campaigns",
-    },
-    {
-      id: "2",
-      title: "⭐ 인기 체험단 TOP 10 확인하기",
-      imageUrl: "https://picsum.photos/seed/banner2/800/400",
-      linkUrl: "/campaigns",
-    },
-  ];
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
@@ -142,11 +126,6 @@ export default function Home() {
             <ArrowRight className="h-5 w-5" />
           </Link>
         </div>
-      </section>
-
-      {/* Banner Section */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-        <HeroBanner items={bannerItems} />
       </section>
 
       {/* Campaign List Section */}
