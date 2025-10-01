@@ -1,7 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { ApplicationListQuery } from '@/features/applications/lib/dto';
+import { apiClient } from '@/lib/remote/api-client';
+import { ApplicationListResponseSchema, type ApplicationListQuery, type ApplicationListResponse } from '@/features/applications/lib/dto';
 
 export const useApplicationsQuery = (query: ApplicationListQuery) => {
   return useQuery({
@@ -12,15 +13,8 @@ export const useApplicationsQuery = (query: ApplicationListQuery) => {
       if (query.page) params.append('page', query.page.toString());
       if (query.limit) params.append('limit', query.limit.toString());
 
-      const response = await fetch(`/api/applications?${params.toString()}`);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || '지원 목록 조회에 실패했습니다');
-      }
-
-      const result = await response.json();
-      return result.data;
+      const { data } = await apiClient.get<ApplicationListResponse>(`/applications?${params.toString()}`);
+      return ApplicationListResponseSchema.parse(data);
     },
   });
 };

@@ -1,5 +1,6 @@
 export const campaignErrorCodes = {
   campaignCreationFailed: 'CAMPAIGN_CREATION_FAILED',
+  campaignFetchFailed: 'CAMPAIGN_FETCH_FAILED',
   campaignNotFound: 'CAMPAIGN_NOT_FOUND',
   campaignUpdateFailed: 'CAMPAIGN_UPDATE_FAILED',
   invalidDateRange: 'INVALID_DATE_RANGE',

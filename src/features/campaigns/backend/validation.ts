@@ -17,5 +17,16 @@ export const isRecruitmentActive = (
   endDate: string,
 ): boolean => {
   const today = getTodayString();
-  return startDate <= today && today <= endDate;
+  const result = startDate <= today && today <= endDate;
+  console.log('[isRecruitmentActive]', {
+    today,
+    startDate,
+    endDate,
+    result,
+    comparison: {
+      startDateOk: startDate <= today,
+      endDateOk: today <= endDate,
+    },
+  });
+  return result;
 };

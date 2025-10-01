@@ -20,12 +20,14 @@ import {
 } from '@/features/advertiser/lib/dto';
 import { useAdvertiserProfileMutation } from '@/features/advertiser/hooks/useAdvertiserProfileMutation';
 import { useAdvertiserProfileQuery } from '@/features/advertiser/hooks/useAdvertiserProfileQuery';
+import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser';
 import { formatBusinessNumber } from '@/lib/validation/business-number';
 
 export const AdvertiserProfileForm = () => {
   const { toast } = useToast();
+  const { isAuthenticated } = useCurrentUser();
   const profileMutation = useAdvertiserProfileMutation();
-  const { data: profileData, isLoading } = useAdvertiserProfileQuery();
+  const { data: profileData, isLoading } = useAdvertiserProfileQuery(isAuthenticated);
 
   const {
     register,

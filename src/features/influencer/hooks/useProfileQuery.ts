@@ -17,19 +17,23 @@ const fetchProfile = async (): Promise<ProfileQueryResponse | null> => {
       'response' in error &&
       error.response &&
       typeof error.response === 'object' &&
-      'status' in error.response &&
-      error.response.status === 404
+      'status' in error.response
     ) {
-      return null;
+      const status = error.response.status;
+      // 404: 프로필 없음 (정상), 401: 인증 오류 (정상 - 로그인 필요)
+      if (status === 404 || status === 401) {
+        return null;
+      }
     }
     throw error;
   }
 };
 
-export const useProfileQuery = () => {
+export const useProfileQuery = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['influencer', 'profile'],
     queryFn: fetchProfile,
     retry: false,
+    enabled,
   });
 };

@@ -29,19 +29,41 @@ import type {
 } from '@/features/influencer/lib/dto';
 import { useProfileMutation } from '@/features/influencer/hooks/useProfileMutation';
 import { useProfileQuery } from '@/features/influencer/hooks/useProfileQuery';
+import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser';
 import { ChannelItem } from './channel-item';
 
 const platformOptions = [
-  { value: 'instagram', label: 'Instagram' },
-  { value: 'youtube', label: 'YouTube' },
-  { value: 'naver', label: '네이버 블로그' },
-  { value: 'threads', label: 'Threads' },
+  {
+    value: 'instagram',
+    label: 'Instagram',
+    placeholder: 'https://instagram.com/username',
+    example: 'https://instagram.com/myaccount'
+  },
+  {
+    value: 'youtube',
+    label: 'YouTube',
+    placeholder: 'https://youtube.com/@channelname',
+    example: 'https://youtube.com/@mychannel'
+  },
+  {
+    value: 'naver',
+    label: '네이버 블로그',
+    placeholder: 'https://blog.naver.com/blogid',
+    example: 'https://blog.naver.com/myblog'
+  },
+  {
+    value: 'threads',
+    label: 'Threads',
+    placeholder: 'https://threads.net/@username',
+    example: 'https://threads.net/@myaccount'
+  },
 ] as const;
 
 export const ProfileForm = () => {
   const { toast } = useToast();
+  const { isAuthenticated } = useCurrentUser();
   const profileMutation = useProfileMutation();
-  const { data: profileData, isLoading } = useProfileQuery();
+  const { data: profileData, isLoading, error } = useProfileQuery(isAuthenticated);
   const [existingChannels, setExistingChannels] = useState<
     Array<{ id: string; platform: string; name: string; url: string; status: string }>
   >([]);
@@ -113,12 +135,32 @@ export const ProfileForm = () => {
         }
       },
       onError: (error) => {
+        let errorMessage = '프로필 저장 중 오류가 발생했습니다';
+        let errorDetails = '';
+
+        if (error instanceof Error) {
+          errorMessage = error.message;
+
+          // 특정 에러 타입에 대한 상세 안내 추가
+          if (error.message.includes('URL 형식')) {
+            errorDetails = '각 플랫폼별 URL 형식을 확인해주세요. 예시를 참고하여 정확히 입력해주세요.';
+          } else if (error.message.includes('만 14세')) {
+            errorDetails = '인플루언서로 등록하려면 만 14세 이상이어야 합니다.';
+          } else if (error.message.includes('이미 등록')) {
+            errorDetails = '동일한 채널 URL이 이미 등록되어 있습니다. 다른 채널을 입력해주세요.';
+          }
+        }
+
         toast({
-          title: '오류 발생',
-          description:
-            error instanceof Error
-              ? error.message
-              : '프로필 저장 중 오류가 발생했습니다',
+          title: '프로필 등록 실패',
+          description: (
+            <div className="space-y-2">
+              <p className="font-medium">{errorMessage}</p>
+              {errorDetails && (
+                <p className="text-sm text-muted-foreground">{errorDetails}</p>
+              )}
+            </div>
+          ),
           variant: 'destructive',
         });
       },
@@ -151,6 +193,14 @@ export const ProfileForm = () => {
           <CardDescription>
             생년월일과 SNS 채널 정보를 입력해주세요. 최소 1개 이상의 채널이 필요합니다.
           </CardDescription>
+          <div className="mt-4 rounded-lg bg-blue-50 border border-blue-200 p-4">
+            <h4 className="text-sm font-semibold text-blue-900 mb-2">📌 URL 입력 시 주의사항</h4>
+            <ul className="text-sm text-blue-800 space-y-1">
+              <li>• <strong>https://</strong> 를 포함한 전체 URL을 입력해주세요</li>
+              <li>• 각 플랫폼별 형식에 맞게 정확히 입력해주세요</li>
+              <li>• URL 입력란 아래 예시를 참고해주세요</li>
+            </ul>
+          </div>
         </CardHeader>
         <CardContent>
           <form className="space-y-6">
@@ -242,13 +292,24 @@ export const ProfileForm = () => {
                       <Input
                         id={`channels.${index}.url`}
                         {...register(`channels.${index}.url`)}
-                        placeholder="https://..."
+                        placeholder={
+                          platformOptions.find(
+                            (opt) => opt.value === watch(`channels.${index}.platform`)
+                          )?.placeholder || 'https://...'
+                        }
                       />
                       {errors.channels?.[index]?.url && (
                         <p className="text-sm text-destructive mt-1">
                           {errors.channels[index]?.url?.message}
                         </p>
                       )}
+                      <p className="text-xs text-slate-500 mt-1">
+                        예시: {
+                          platformOptions.find(
+                            (opt) => opt.value === watch(`channels.${index}.platform`)
+                          )?.example || 'https://...'
+                        }
+                      </p>
                     </div>
 
                     {fields.length > 1 && (

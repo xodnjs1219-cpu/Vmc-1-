@@ -3,20 +3,15 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, LogIn, Loader2 } from 'lucide-react';
+import { LogIn, Loader2, ArrowLeft } from 'lucide-react';
+import { AdvertiserProfileForm } from '@/features/advertiser/components/profile-form';
+import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
-import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser';
 
-export default function AdvertiserOnboardingPage() {
+export default function AdvertiserProfilePage() {
   const { user, isAuthenticated, isLoading } = useCurrentUser();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.push('/dashboard');
-    }
-  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading) {
     return (
@@ -31,25 +26,10 @@ export default function AdvertiserOnboardingPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 px-6 py-16">
-        <header className="flex items-center justify-between">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-slate-900">광고주 온보딩</h1>
-            <p className="text-sm text-slate-500">
-              광고주 정보를 등록하려면 먼저 로그인이 필요합니다.
-            </p>
-          </div>
-          <Button asChild variant="ghost" className="gap-2">
-            <Link href="/">
-              <ArrowLeft className="h-4 w-4" />
-              홈으로 돌아가기
-            </Link>
-          </Button>
-        </header>
-
+      <div className="container mx-auto py-16 px-4 max-w-3xl">
         <EmptyState
           title="로그인이 필요합니다"
-          description="광고주 정보를 등록하고 체험단을 관리하려면 먼저 로그인해주세요. 계정이 없다면 회원가입을 진행해주세요."
+          description="광고주 프로필을 등록하려면 먼저 로그인해주세요."
           action={
             <div className="flex flex-col sm:flex-row gap-3">
               <Button asChild className="bg-indigo-600 hover:bg-indigo-700">
@@ -68,5 +48,18 @@ export default function AdvertiserOnboardingPage() {
     );
   }
 
-  return null;
+  return (
+    <div className="container mx-auto py-8 px-4 max-w-4xl">
+      <div className="mb-6">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:underline mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          대시보드로 돌아가기
+        </Link>
+      </div>
+      <AdvertiserProfileForm />
+    </div>
+  );
 }

@@ -21,6 +21,7 @@ import {
   getCampaignsByAdvertiser,
   getPublicCampaigns,
   getCampaignDetail,
+  getCampaignDetailForAdvertiser,
   updateCampaign,
   updateCampaignStatus,
   getApplicantsByCampaign,
@@ -101,26 +102,40 @@ export const registerCampaignRoutes = (app: Hono<AppEnv>) => {
     const supabase = getSupabase(c);
     const logger = getLogger(c);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-    const result = await getPublicCampaigns(
-      supabase,
-      parsedQuery.data,
-      user?.id,
-    );
+      logger.info('Fetching campaigns', { query: parsedQuery.data, userId: user?.id });
 
-    if (!result.ok) {
-      logger.error('Failed to fetch campaigns');
+      const result = await getPublicCampaigns(
+        supabase,
+        parsedQuery.data,
+        user?.id,
+      );
+
+      if (!result.ok) {
+        logger.error('Failed to fetch campaigns', { error: result.error });
+        return respond(c, result);
+      }
+
+      logger.info('Campaigns retrieved', {
+        count: result.data.campaigns.length,
+      });
+
       return respond(c, result);
+    } catch (error) {
+      logger.error('Unexpected error fetching campaigns', { error });
+      return respond(
+        c,
+        failure(
+          500,
+          campaignErrorCodes.campaignFetchFailed,
+          error instanceof Error ? error.message : '체험단 조회 중 오류가 발생했습니다',
+        ),
+      );
     }
-
-    logger.info('Campaigns retrieved', {
-      count: result.data.campaigns.length,
-    });
-
-    return respond(c, result);
   });
 
   app.get('/campaigns/:id', async (c) => {
@@ -140,6 +155,38 @@ export const registerCampaignRoutes = (app: Hono<AppEnv>) => {
     }
 
     logger.info('Campaign detail retrieved', { campaignId });
+
+    return respond(c, result);
+  });
+
+  app.get('/campaigns/:id/manage', async (c) => {
+    const campaignId = c.req.param('id');
+    const supabase = getSupabase(c);
+    const logger = getLogger(c);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return respond(
+        c,
+        failure(
+          401,
+          campaignErrorCodes.unauthorizedAccess,
+          '인증이 필요합니다',
+        ),
+      );
+    }
+
+    const result = await getCampaignDetailForAdvertiser(supabase, campaignId, user.id);
+
+    if (!result.ok) {
+      logger.error('Failed to fetch campaign detail for advertiser', { campaignId, userId: user.id });
+      return respond(c, result);
+    }
+
+    logger.info('Campaign detail for advertiser retrieved', { campaignId, userId: user.id });
 
     return respond(c, result);
   });

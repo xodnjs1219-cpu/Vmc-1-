@@ -20,6 +20,10 @@ import {
 import { validateVisitDate } from './validation';
 import { isRecruitmentActive } from '@/features/campaigns/backend/validation';
 
+const formatDateToString = (dateString: string): string => {
+  return dateString.split('T')[0];
+};
+
 const APPLICATIONS_TABLE = 'applications';
 const CAMPAIGNS_TABLE = 'campaigns';
 const INFLUENCER_PROFILES_TABLE = 'influencer_profiles';
@@ -93,7 +97,10 @@ export const createApplication = async (
   }
 
   if (
-    !isRecruitmentActive(campaign.recruitment_start, campaign.recruitment_end)
+    !isRecruitmentActive(
+      formatDateToString(campaign.recruitment_start),
+      formatDateToString(campaign.recruitment_end)
+    )
   ) {
     return failure(
       400,
@@ -102,7 +109,7 @@ export const createApplication = async (
     );
   }
 
-  if (!validateVisitDate(visitDate, campaign.recruitment_end)) {
+  if (!validateVisitDate(visitDate, formatDateToString(campaign.recruitment_end))) {
     return failure(
       400,
       applicationErrorCodes.invalidVisitDate,

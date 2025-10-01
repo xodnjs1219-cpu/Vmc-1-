@@ -170,6 +170,16 @@ export const ApplicantResponseSchema = z.object({
 
 export type ApplicantResponse = z.infer<typeof ApplicantResponseSchema>;
 
+export const CampaignDetailAdvertiserResponseSchema = z.object({
+  campaign: CampaignResponseSchema,
+  applicants: z.array(ApplicantResponseSchema),
+  isOwner: z.boolean(),
+});
+
+export type CampaignDetailAdvertiserResponse = z.infer<
+  typeof CampaignDetailAdvertiserResponseSchema
+>;
+
 export const ApplicantsListResponseSchema = z.object({
   applicants: z.array(ApplicantResponseSchema),
   totalCount: z.number(),

@@ -3,7 +3,7 @@ import {
   contextKeys,
   type AppEnv,
 } from '@/backend/hono/context';
-import { createServiceClient } from '@/backend/supabase/client';
+import { createAuthenticatedClient } from '@/backend/supabase/client';
 
 export const withSupabase = () =>
   createMiddleware<AppEnv>(async (c, next) => {
@@ -15,7 +15,8 @@ export const withSupabase = () =>
       throw new Error('Application configuration is not available.');
     }
 
-    const client = createServiceClient(config.supabase);
+    // 쿠키에서 사용자 세션을 읽어오는 인증된 클라이언트 생성
+    const client = await createAuthenticatedClient(c, config.supabase);
 
     c.set(contextKeys.supabase, client);
 

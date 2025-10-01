@@ -31,11 +31,16 @@ export const createSupabaseServerClient = async (): Promise<
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            if (typeof cookieStore.set === "function") {
-              cookieStore.set({ name, value, ...options });
-            }
-          });
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              if (typeof cookieStore.set === "function") {
+                cookieStore.set({ name, value, ...options });
+              }
+            });
+          } catch {
+            // Route Handler나 Server Action이 아닌 곳에서는 쿠키 설정 불가
+            // 읽기만 가능하므로 에러 무시
+          }
         },
       },
     }

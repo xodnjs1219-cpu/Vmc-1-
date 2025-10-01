@@ -12,6 +12,7 @@ import {
   CampaignCreateResponseSchema,
   CampaignListResponseSchema,
   CampaignDetailResponseSchema,
+  CampaignDetailAdvertiserResponseSchema,
   CampaignResponseSchema,
   ApplicantsListResponseSchema,
   type CampaignCreateRequest,
@@ -20,6 +21,7 @@ import {
   type CampaignListQuery,
   type CampaignListResponse,
   type CampaignDetailResponse,
+  type CampaignDetailAdvertiserResponse,
   type CampaignResponse,
   type CampaignStatusUpdateRequest,
   type SelectApplicantsRequest,
@@ -27,6 +29,10 @@ import {
   type CampaignRow,
 } from '@/features/campaigns/backend/schema';
 import { validateRecruitmentPeriod, isRecruitmentActive } from './validation';
+
+const formatDateToString = (dateString: string): string => {
+  return dateString.split('T')[0];
+};
 
 const CAMPAIGNS_TABLE = 'campaigns';
 const ADVERTISER_PROFILES_TABLE = 'advertiser_profiles';
@@ -87,8 +93,8 @@ export const createCampaign = async (
     .insert({
       advertiser_id: advertiserId,
       title,
-      recruitment_start: recruitmentStart,
-      recruitment_end: recruitmentEnd,
+      recruitment_start: `${recruitmentStart}T00:00:00Z`,
+      recruitment_end: `${recruitmentEnd}T23:59:59Z`,
       max_participants: maxParticipants,
       benefits,
       store_info: storeInfo,
@@ -112,8 +118,8 @@ export const createCampaign = async (
     campaignId: campaign.id,
     advertiserId: campaign.advertiser_id,
     title: campaign.title,
-    recruitmentStart: campaign.recruitment_start,
-    recruitmentEnd: campaign.recruitment_end,
+    recruitmentStart: formatDateToString(campaign.recruitment_start),
+    recruitmentEnd: formatDateToString(campaign.recruitment_end),
     maxParticipants: campaign.max_participants,
     benefits: campaign.benefits,
     storeInfo: campaign.store_info,
@@ -152,7 +158,7 @@ export const getCampaignsByAdvertiser = async (
   if (campaignsError) {
     return failure(
       500,
-      campaignErrorCodes.campaignCreationFailed,
+      campaignErrorCodes.campaignFetchFailed,
       '체험단 목록을 가져오는데 실패했습니다',
     );
   }
@@ -164,8 +170,8 @@ export const getCampaignsByAdvertiser = async (
       id: c.id,
       advertiserId: c.advertiser_id,
       title: c.title,
-      recruitmentStart: c.recruitment_start,
-      recruitmentEnd: c.recruitment_end,
+      recruitmentStart: formatDateToString(c.recruitment_start),
+      recruitmentEnd: formatDateToString(c.recruitment_end),
       maxParticipants: c.max_participants,
       benefits: c.benefits,
       storeInfo: c.store_info,
@@ -208,7 +214,9 @@ export const getPublicCampaigns = async (
     .select(
       `
       *,
-      advertiser_profiles!inner(company_name, location, category)
+      profiles!campaigns_advertiser_id_fkey(
+        advertiser_profiles(company_name, location, category)
+      )
     `,
       { count: 'exact' },
     );
@@ -220,11 +228,11 @@ export const getPublicCampaigns = async (
   }
 
   if (category) {
-    queryBuilder = queryBuilder.eq('advertiser_profiles.category', category);
+    queryBuilder = queryBuilder.eq('profiles.advertiser_profiles.category', category);
   }
 
   if (region) {
-    queryBuilder = queryBuilder.ilike('advertiser_profiles.location', `%${region}%`);
+    queryBuilder = queryBuilder.ilike('profiles.advertiser_profiles.location', `%${region}%`);
   }
 
   if (sort === 'latest') {
@@ -243,10 +251,16 @@ export const getPublicCampaigns = async (
   const { data: campaignsData, error: campaignsError, count } = await queryBuilder;
 
   if (campaignsError) {
+    console.error('[getPublicCampaigns] Supabase query error:', {
+      message: campaignsError.message,
+      details: campaignsError.details,
+      hint: campaignsError.hint,
+      code: campaignsError.code,
+    });
     return failure(
       500,
-      campaignErrorCodes.campaignCreationFailed,
-      '체험단 목록을 가져오는데 실패했습니다',
+      campaignErrorCodes.campaignFetchFailed,
+      `체험단 목록을 가져오는데 실패했습니다: ${campaignsError.message}`,
     );
   }
 
@@ -259,8 +273,8 @@ export const getPublicCampaigns = async (
       id: c.id,
       advertiserId: c.advertiser_id,
       title: c.title,
-      recruitmentStart: c.recruitment_start,
-      recruitmentEnd: c.recruitment_end,
+      recruitmentStart: formatDateToString(c.recruitment_start),
+      recruitmentEnd: formatDateToString(c.recruitment_end),
       maxParticipants: c.max_participants,
       benefits: c.benefits,
       storeInfo: c.store_info,
@@ -268,11 +282,11 @@ export const getPublicCampaigns = async (
       status: c.status,
       createdAt: c.created_at,
       updatedAt: c.updated_at,
-      advertiser: c.advertiser_profiles
+      advertiser: c.profiles?.advertiser_profiles
         ? {
-            companyName: c.advertiser_profiles.company_name,
-            location: c.advertiser_profiles.location,
-            category: c.advertiser_profiles.category,
+            companyName: c.profiles.advertiser_profiles.company_name,
+            location: c.profiles.advertiser_profiles.location,
+            category: c.profiles.advertiser_profiles.category,
           }
         : undefined,
     })),
@@ -308,7 +322,9 @@ export const getCampaignDetail = async (
     .select(
       `
       *,
-      advertiser_profiles!inner(company_name, location, category)
+      profiles!campaigns_advertiser_id_fkey(
+        advertiser_profiles(company_name, location, category)
+      )
     `,
     )
     .eq('id', campaignId)
@@ -326,8 +342,8 @@ export const getCampaignDetail = async (
     id: campaignData.id,
     advertiserId: campaignData.advertiser_id,
     title: campaignData.title,
-    recruitmentStart: campaignData.recruitment_start,
-    recruitmentEnd: campaignData.recruitment_end,
+    recruitmentStart: formatDateToString(campaignData.recruitment_start),
+    recruitmentEnd: formatDateToString(campaignData.recruitment_end),
     maxParticipants: campaignData.max_participants,
     benefits: campaignData.benefits,
     storeInfo: campaignData.store_info,
@@ -335,11 +351,11 @@ export const getCampaignDetail = async (
     status: campaignData.status,
     createdAt: campaignData.created_at,
     updatedAt: campaignData.updated_at,
-    advertiser: campaignData.advertiser_profiles
+    advertiser: campaignData.profiles?.advertiser_profiles
       ? {
-          companyName: campaignData.advertiser_profiles.company_name,
-          location: campaignData.advertiser_profiles.location,
-          category: campaignData.advertiser_profiles.category,
+          companyName: campaignData.profiles.advertiser_profiles.company_name,
+          location: campaignData.profiles.advertiser_profiles.location,
+          category: campaignData.profiles.advertiser_profiles.category,
         }
       : undefined,
   };
@@ -381,9 +397,23 @@ export const getCampaignDetail = async (
     const isRecruiting =
       campaignData.status === 'recruiting' &&
       isRecruitmentActive(
-        campaignData.recruitment_start,
-        campaignData.recruitment_end,
+        formatDateToString(campaignData.recruitment_start),
+        formatDateToString(campaignData.recruitment_end),
       );
+
+    console.log('[canApply Debug]', {
+      userId,
+      campaignId,
+      hasApplied,
+      isRecruiting,
+      campaignStatus: campaignData.status,
+      recruitmentStart: formatDateToString(campaignData.recruitment_start),
+      recruitmentEnd: formatDateToString(campaignData.recruitment_end),
+      influencerProfileStatus: influencerProfile?.status,
+      verifiedChannelsCount: verifiedChannels?.length || 0,
+      applicantsCount: applicantsCount || 0,
+      maxParticipants: campaignData.max_participants,
+    });
 
     canApply =
       !hasApplied &&
@@ -402,6 +432,147 @@ export const getCampaignDetail = async (
   };
 
   const parsed = CampaignDetailResponseSchema.safeParse(response);
+
+  if (!parsed.success) {
+    return failure(
+      500,
+      campaignErrorCodes.validationError,
+      '응답 데이터 검증에 실패했습니다',
+      parsed.error.format(),
+    );
+  }
+
+  return success(parsed.data, 200);
+};
+
+export const getCampaignDetailForAdvertiser = async (
+  client: SupabaseClient,
+  campaignId: string,
+  advertiserId: string,
+): Promise<
+  HandlerResult<CampaignDetailAdvertiserResponse, CampaignErrorCode, unknown>
+> => {
+  const { data: campaignData, error: campaignError } = await client
+    .from(CAMPAIGNS_TABLE)
+    .select(
+      `
+      *,
+      profiles!campaigns_advertiser_id_fkey(
+        advertiser_profiles(company_name, location, category)
+      )
+    `,
+    )
+    .eq('id', campaignId)
+    .single();
+
+  if (campaignError || !campaignData) {
+    return failure(
+      404,
+      campaignErrorCodes.campaignNotFound,
+      '체험단을 찾을 수 없습니다',
+    );
+  }
+
+  const isOwner = campaignData.advertiser_id === advertiserId;
+
+  if (!isOwner) {
+    return failure(
+      403,
+      campaignErrorCodes.unauthorizedAccess,
+      '본인이 등록한 체험단만 관리할 수 있습니다',
+    );
+  }
+
+  const campaign: CampaignResponse = {
+    id: campaignData.id,
+    advertiserId: campaignData.advertiser_id,
+    title: campaignData.title,
+    recruitmentStart: formatDateToString(campaignData.recruitment_start),
+    recruitmentEnd: formatDateToString(campaignData.recruitment_end),
+    maxParticipants: campaignData.max_participants,
+    benefits: campaignData.benefits,
+    storeInfo: campaignData.store_info,
+    mission: campaignData.mission,
+    status: campaignData.status,
+    createdAt: campaignData.created_at,
+    updatedAt: campaignData.updated_at,
+    advertiser: campaignData.profiles?.advertiser_profiles
+      ? {
+          companyName: campaignData.profiles.advertiser_profiles.company_name,
+          location: campaignData.profiles.advertiser_profiles.location,
+          category: campaignData.profiles.advertiser_profiles.category,
+        }
+      : undefined,
+  };
+
+  const { data: applicationsData, error: applicationsError } = await client
+    .from(APPLICATIONS_TABLE)
+    .select('*')
+    .eq('campaign_id', campaignId)
+    .order('created_at', { ascending: true });
+
+  if (applicationsError) {
+    console.error('[getCampaignDetailForAdvertiser] Applications fetch error:', {
+      error: applicationsError,
+      message: applicationsError.message,
+      details: applicationsError.details,
+      hint: applicationsError.hint,
+    });
+    return failure(
+      500,
+      campaignErrorCodes.campaignFetchFailed,
+      `지원자 목록을 가져오는데 실패했습니다: ${applicationsError.message}`,
+    );
+  }
+
+  const applications = applicationsData || [];
+
+  const applicantsWithChannels = await Promise.all(
+    applications.map(async (app: any) => {
+      const { data: profileData } = await client
+        .from(PROFILES_TABLE)
+        .select('name, email')
+        .eq('user_id', app.user_id)
+        .single();
+
+      const { data: influencerData } = await client
+        .from(INFLUENCER_PROFILES_TABLE)
+        .select('birth_date')
+        .eq('user_id', app.user_id)
+        .single();
+
+      const { data: channelsData } = await client
+        .from(INFLUENCER_CHANNELS_TABLE)
+        .select('platform, channel_name, channel_url, status')
+        .eq('user_id', app.user_id);
+
+      return {
+        id: app.id,
+        userId: app.user_id,
+        userName: profileData?.name || 'Unknown',
+        userEmail: profileData?.email || 'unknown@email.com',
+        birthDate: influencerData?.birth_date || '1990-01-01',
+        message: app.message,
+        visitDate: app.visit_date,
+        status: app.status,
+        createdAt: app.created_at,
+        channels: (channelsData || []).map((ch: any) => ({
+          platform: ch.platform,
+          name: ch.channel_name,
+          url: ch.channel_url,
+          status: ch.status,
+        })),
+      };
+    }),
+  );
+
+  const response: CampaignDetailAdvertiserResponse = {
+    campaign,
+    applicants: applicantsWithChannels,
+    isOwner,
+  };
+
+  const parsed = CampaignDetailAdvertiserResponseSchema.safeParse(response);
 
   if (!parsed.success) {
     return failure(
@@ -449,9 +620,9 @@ export const updateCampaign = async (
   const updateData: any = {};
   if (request.title !== undefined) updateData.title = request.title;
   if (request.recruitmentStart !== undefined)
-    updateData.recruitment_start = request.recruitmentStart;
+    updateData.recruitment_start = `${request.recruitmentStart}T00:00:00Z`;
   if (request.recruitmentEnd !== undefined)
-    updateData.recruitment_end = request.recruitmentEnd;
+    updateData.recruitment_end = `${request.recruitmentEnd}T23:59:59Z`;
   if (request.maxParticipants !== undefined)
     updateData.max_participants = request.maxParticipants;
   if (request.benefits !== undefined) updateData.benefits = request.benefits;
@@ -479,8 +650,8 @@ export const updateCampaign = async (
     id: campaign.id,
     advertiserId: campaign.advertiser_id,
     title: campaign.title,
-    recruitmentStart: campaign.recruitment_start,
-    recruitmentEnd: campaign.recruitment_end,
+    recruitmentStart: formatDateToString(campaign.recruitment_start),
+    recruitmentEnd: formatDateToString(campaign.recruitment_end),
     maxParticipants: campaign.max_participants,
     benefits: campaign.benefits,
     storeInfo: campaign.store_info,
@@ -566,8 +737,8 @@ export const updateCampaignStatus = async (
     id: updatedCampaign.id,
     advertiserId: updatedCampaign.advertiser_id,
     title: updatedCampaign.title,
-    recruitmentStart: updatedCampaign.recruitment_start,
-    recruitmentEnd: updatedCampaign.recruitment_end,
+    recruitmentStart: formatDateToString(updatedCampaign.recruitment_start),
+    recruitmentEnd: formatDateToString(updatedCampaign.recruitment_end),
     maxParticipants: updatedCampaign.max_participants,
     benefits: updatedCampaign.benefits,
     storeInfo: updatedCampaign.store_info,
@@ -628,7 +799,7 @@ export const getApplicantsByCampaign = async (
   if (applicationsError) {
     return failure(
       500,
-      campaignErrorCodes.campaignCreationFailed,
+      campaignErrorCodes.campaignFetchFailed,
       '지원자 목록을 가져오는데 실패했습니다',
     );
   }
@@ -710,11 +881,19 @@ export const selectApplicants = async (
     );
   }
 
-  if (request.selectedIds.length !== campaign.max_participants) {
+  if (request.selectedIds.length === 0) {
     return failure(
       400,
       campaignErrorCodes.selectionCountMismatch,
-      `선정 인원은 모집 인원(${campaign.max_participants}명)과 일치해야 합니다`,
+      '최소 1명 이상 선정해야 합니다',
+    );
+  }
+
+  if (request.selectedIds.length > campaign.max_participants) {
+    return failure(
+      400,
+      campaignErrorCodes.selectionCountMismatch,
+      `선정 인원은 최대 모집 인원(${campaign.max_participants}명) 이하여야 합니다`,
     );
   }
 

@@ -7,7 +7,7 @@ import {
   type AdvertiserProfileResponse,
 } from '@/features/advertiser/lib/dto';
 
-export const useAdvertiserProfileQuery = () =>
+export const useAdvertiserProfileQuery = (enabled: boolean = true) =>
   useQuery<AdvertiserProfileResponse | null>({
     queryKey: ['advertiser-profile'],
     queryFn: async () => {
@@ -21,4 +21,6 @@ export const useAdvertiserProfileQuery = () =>
         throw new Error(extractApiErrorMessage(error, '프로필 조회에 실패했습니다'));
       }
     },
+    retry: false,
+    enabled,
   });

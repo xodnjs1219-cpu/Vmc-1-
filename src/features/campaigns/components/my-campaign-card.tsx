@@ -5,36 +5,22 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, Users, Gift, MapPin, Building2 } from 'lucide-react';
+import { Calendar, Users, Gift, Settings } from 'lucide-react';
 import type { CampaignResponse } from '@/features/campaigns/lib/dto';
 
-interface CampaignCardProps {
+const STATUS_CONFIG = {
+  recruiting: { label: '모집중', color: 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm' },
+  closed: { label: '모집종료', color: 'bg-amber-500 text-white shadow-sm' },
+  completed: { label: '선정완료', color: 'bg-indigo-500 text-white shadow-sm' },
+} as const;
+
+interface MyCampaignCardProps {
   campaign: CampaignResponse;
 }
 
-export const CampaignCard = ({ campaign }: CampaignCardProps) => {
-  const getStatusBadge = () => {
-    switch (campaign.status) {
-      case 'recruiting':
-        return (
-          <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm">
-            모집중
-          </Badge>
-        );
-      case 'closed':
-        return (
-          <Badge variant="secondary" className="bg-slate-200 text-slate-700">
-            모집종료
-          </Badge>
-        );
-      case 'completed':
-        return (
-          <Badge variant="outline" className="border-indigo-300 text-indigo-700">
-            선정완료
-          </Badge>
-        );
-    }
-  };
+export const MyCampaignCard = ({ campaign }: MyCampaignCardProps) => {
+  const statusConfig = STATUS_CONFIG[campaign.status];
+  const applicantsCount = campaign.applicantsCount ?? 0;
 
   return (
     <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-slate-200">
@@ -47,7 +33,7 @@ export const CampaignCard = ({ campaign }: CampaignCardProps) => {
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute top-3 right-3">
-          {getStatusBadge()}
+          <Badge className={statusConfig.color}>{statusConfig.label}</Badge>
         </div>
       </div>
 
@@ -55,20 +41,6 @@ export const CampaignCard = ({ campaign }: CampaignCardProps) => {
         <CardTitle className="text-xl font-bold text-slate-900 line-clamp-2 leading-tight">
           {campaign.title}
         </CardTitle>
-        {campaign.advertiser && (
-          <div className="flex flex-col gap-1.5 mt-2 pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-2 text-sm text-slate-700">
-              <Building2 className="h-4 w-4 text-indigo-600 flex-shrink-0" />
-              <span className="font-medium">{campaign.advertiser.companyName}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <MapPin className="h-4 w-4 flex-shrink-0" />
-              <span>
-                {campaign.advertiser.category} · {campaign.advertiser.location}
-              </span>
-            </div>
-          </div>
-        )}
       </CardHeader>
 
       <CardContent className="space-y-4 pt-0">
@@ -86,7 +58,8 @@ export const CampaignCard = ({ campaign }: CampaignCardProps) => {
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <Users className="h-4 w-4 text-indigo-600 flex-shrink-0" />
             <span>
-              <span className="font-medium text-slate-700">모집인원</span> {campaign.maxParticipants}명
+              <span className="font-medium text-emerald-600">{applicantsCount}명</span> 지원 /{' '}
+              <span className="font-medium text-slate-700">{campaign.maxParticipants}명</span> 모집
             </span>
           </div>
 
@@ -101,11 +74,12 @@ export const CampaignCard = ({ campaign }: CampaignCardProps) => {
           </div>
         </div>
 
-        <Link href={`/campaigns/${campaign.id}`} className="block">
+        <Link href={`/campaigns/${campaign.id}/manage`} className="block">
           <Button
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all duration-200 group-hover:shadow-md"
           >
-            자세히 보기
+            <Settings className="h-4 w-4 mr-2" />
+            관리하기
           </Button>
         </Link>
       </CardContent>
