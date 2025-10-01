@@ -26,20 +26,20 @@ export const TermsDialog = ({ children }: { children: React.ReactNode }) => {
             <section>
               <h3 className="font-semibold mb-2">제1조 (목적)</h3>
               <p className="text-slate-600 leading-relaxed">
-                본 약관은 review-ad(이하 "회사")가 제공하는 블로그 체험단 매칭 플랫폼 서비스(이하 "서비스")의 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
+                본 약관은 review-ad(이하 &ldquo;회사&rdquo;)가 제공하는 블로그 체험단 매칭 플랫폼 서비스(이하 &ldquo;서비스&rdquo;)의 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
               </p>
             </section>
 
             <section>
               <h3 className="font-semibold mb-2">제2조 (정의)</h3>
               <p className="text-slate-600 leading-relaxed">
-                1. "서비스"란 회사가 제공하는 광고주와 인플루언서를 연결하는 체험단 매칭 플랫폼을 의미합니다.
+                1. &ldquo;서비스&rdquo;란 회사가 제공하는 광고주와 인플루언서를 연결하는 체험단 매칭 플랫폼을 의미합니다.
                 <br />
-                2. "회원"이란 본 약관에 동의하고 회사와 서비스 이용계약을 체결한 자를 의미합니다.
+                2. &ldquo;회원&rdquo;이란 본 약관에 동의하고 회사와 서비스 이용계약을 체결한 자를 의미합니다.
                 <br />
-                3. "광고주"란 체험단을 모집하고 캠페인을 진행하는 회원을 의미합니다.
+                3. &ldquo;광고주&rdquo;란 체험단을 모집하고 캠페인을 진행하는 회원을 의미합니다.
                 <br />
-                4. "인플루언서"란 체험단에 지원하고 콘텐츠를 제작하는 회원을 의미합니다.
+                4. &ldquo;인플루언서&rdquo;란 체험단에 지원하고 콘텐츠를 제작하는 회원을 의미합니다.
               </p>
             </section>
 
