@@ -149,15 +149,8 @@ export default function Home() {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/dashboard/advertiser"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-pink-600 shadow-lg transition hover:bg-slate-50 hover:scale-105"
-              >
-                체험단 만들기
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-              <Link
                 href="/dashboard/my-campaigns"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border-2 border-white bg-white/10 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition hover:bg-white/20 hover:scale-105"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-pink-600 shadow-lg transition hover:bg-slate-50 hover:scale-105"
               >
                 내 캠페인 관리
                 <ArrowRight className="h-5 w-5" />

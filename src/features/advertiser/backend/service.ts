@@ -43,23 +43,23 @@ export const createAdvertiserProfile = async (
 
   const { data: existingBusinessNumber } = await client
     .from(ADVERTISER_PROFILES_TABLE)
-    .select('business_number')
+    .select('user_id')
     .eq('business_number', businessNumber)
     .single();
-
-  if (existingBusinessNumber) {
-    return failure(
-      409,
-      advertiserErrorCodes.duplicateBusinessNumber,
-      '이미 등록된 사업자등록번호입니다',
-    );
-  }
 
   const { data: existingProfile } = await client
     .from(ADVERTISER_PROFILES_TABLE)
     .select('*')
     .eq('user_id', userId)
     .single();
+
+  if (existingBusinessNumber && existingBusinessNumber.user_id !== userId) {
+    return failure(
+      409,
+      advertiserErrorCodes.duplicateBusinessNumber,
+      '이미 등록된 사업자등록번호입니다',
+    );
+  }
 
   if (existingProfile) {
     const { data: updateData, error: updateError } = await client

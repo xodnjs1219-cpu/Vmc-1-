@@ -532,7 +532,7 @@ export const getCampaignDetailForAdvertiser = async (
       const { data: profileData } = await client
         .from(PROFILES_TABLE)
         .select('name, email')
-        .eq('user_id', app.user_id)
+        .eq('id', app.user_id)
         .single();
 
       const { data: influencerData } = await client
