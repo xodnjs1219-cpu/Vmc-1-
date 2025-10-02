@@ -35,6 +35,12 @@ default_agents = ["cursor", "codex","claude","gemini"]
 command = "npx"
 args = ["-y", "chrome-devtools-mcp@latest"]
 
+# Context7 MCP Server - AI-powered code context and search
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp@latest"]
+env = { CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}" }
+
 # Optional: Advanced configuration with headless mode and isolated profile
 # [mcp_servers.chrome-devtools]
 # command = "npx"

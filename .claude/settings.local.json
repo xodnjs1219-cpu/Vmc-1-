@@ -10,9 +10,18 @@
       "Bash(powershell:*)",
       "Bash(git checkout:*)",
       "Bash(iconv:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npx:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "chrome-devtools"
+  ],
+  "shell": {
+    "path": "C:\\Program Files\\Git\\bin\\bash.exe"
   }
 }
