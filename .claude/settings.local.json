@@ -12,7 +12,8 @@
       "Bash(iconv:*)",
       "Bash(npx shadcn@latest add:*)",
       "Bash(npx:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
