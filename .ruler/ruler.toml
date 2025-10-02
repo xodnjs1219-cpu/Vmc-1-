@@ -30,6 +30,22 @@ default_agents = ["cursor", "codex","claude","gemini"]
 # 1. A stdio server (local executable)
 # 2. A remote server (HTTP-based)
 
+# Chrome DevTools MCP Server
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp@latest"]
+
+# Optional: Advanced configuration with headless mode and isolated profile
+# [mcp_servers.chrome-devtools]
+# command = "npx"
+# args = [
+#   "-y",
+#   "chrome-devtools-mcp@latest",
+#   "--headless=true",
+#   "--isolated=true",
+#   "--channel=stable"
+# ]
+
 # [mcp_servers.example_stdio]
 # command = "node"
 # args = ["scripts/your-mcp-server.js"]
